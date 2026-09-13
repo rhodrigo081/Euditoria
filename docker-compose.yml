@@ -1,0 +1,45 @@
+services:
+  # ==========================================
+  # Backend: Java / Spring Boot 3.3
+  # ==========================================
+  euditoria-backend:
+    build:
+      context: ./src/app
+      dockerfile: Dockerfile
+    container_name: euditoria-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_PORT=8080
+      - EUDITORIA_RATELIMIT_ENABLED=true
+      - EUDITORIA_CONFIDENTIALITY_STRICT=true
+    networks:
+      - euditoria-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/v1/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  # ==========================================
+  # Frontend: React 18 + Vite + Nginx Reverse Proxy
+  # ==========================================
+  euditoria-frontend:
+    build:
+      context: ./src/public
+      dockerfile: Dockerfile
+    container_name: euditoria-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      euditoria-backend:
+        condition: service_healthy
+    networks:
+      - euditoria-network
+    restart: unless-stopped
+
+networks:
+  euditoria-network:
+    driver: bridge

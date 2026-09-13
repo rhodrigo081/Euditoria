@@ -1,0 +1,27 @@
+﻿server:
+  port: 8080
+  error:
+    include-stacktrace: never
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  application:
+    name: euditoria-backend
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 25MB
+
+euditoria:
+  security:
+    confidentiality-strict: true
+    expose-internal-traces: false
+  ratelimit:
+    enabled: true
+    default-requests-per-minute: 120
+  async:
+    core-pool-size: 4
+    max-pool-size: 16
+    queue-capacity: 100
+    thread-name-prefix: "EuditoriaAsync-"

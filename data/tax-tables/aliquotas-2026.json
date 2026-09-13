@@ -1,0 +1,33 @@
+﻿{
+  "vigencia": "2026",
+  "inss": {
+    "teto": 8157.41,
+    "faixas": [
+      { "limite": 1518.00, "aliquota": 0.075, "deducao": 0.00 },
+      { "limite": 2793.88, "aliquota": 0.090, "deducao": 22.77 },
+      { "limite": 4190.83, "aliquota": 0.120, "deducao": 106.59 },
+      { "limite": 8157.41, "aliquota": 0.140, "deducao": 190.41 }
+    ],
+    "patronal": {
+      "aliquotaBasica": 0.20,
+      "rat": 0.02,
+      "fapPadrao": 1.0,
+      "terceirosOutrasEntidades": 0.058
+    }
+  },
+  "irrf": {
+    "deducaoPorDependente": 189.59,
+    "faixas": [
+      { "limite": 2259.20, "aliquota": 0.00, "deducao": 0.00 },
+      { "limite": 2826.65, "aliquota": 0.075, "deducao": 169.44 },
+      { "limite": 3751.05, "aliquota": 0.150, "deducao": 381.44 },
+      { "limite": 4664.68, "aliquota": 0.225, "deducao": 662.77 },
+      { "limite": 9999999.99, "aliquota": 0.275, "deducao": 896.00 }
+    ]
+  },
+  "fgts": {
+    "aliquotaGeral": 0.08,
+    "aliquotaAprendiz": 0.02,
+    "multaRescisoria": 0.40
+  }
+}

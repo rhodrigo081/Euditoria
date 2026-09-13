@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<eSocial xmlns="http://www.esocial.gov.br/schema/lote/eventos/envio/v1_1_1">
+  <envioLoteEventos grupo="1">
+    <ideEmpregador>
+      <tpInsc>1</tpInsc>
+      <nrInsc>12345678000195</nrInsc>
+    </ideEmpregador>
+    <eventos>
+      <!-- Evento S-1200: Remuneração do Trabalhador -->
+      <evento Id="ID1123456780001952026091300000001">
+        <eSocial xmlns="http://www.esocial.gov.br/schema/evt/evtRemun/v_S_01_02_00">
+          <evtRemun Id="ID1123456780001952026091300000001">
+            <ideEvento>
+              <indRetif>1</indRetif>
+              <perApur>2026-09</perApur>
+              <tpAmb>1</tpAmb>
+              <procEmi>1</procEmi>
+              <verProc>1.0.0</verProc>
+            </ideEvento>
+            <ideEmpregador>
+              <tpInsc>1</tpInsc>
+              <nrInsc>12345678000195</nrInsc>
+            </ideEmpregador>
+            <ideTrabalhador>
+              <cpfTrab>52998224725</cpfTrab>
+              <infoComplem>
+                <nmTrab>Carlos Eduardo da Silva</nmTrab>
+              </infoComplem>
+            </ideTrabalhador>
+            <dmDev>
+              <ideDmDev>DEMO20260901</ideDmDev>
+              <infoPerApur>
+                <ideEstabLot>
+                  <tpInsc>1</tpInsc>
+                  <nrInsc>12345678000195</nrInsc>
+                  <codLotacao>LOT001</codLotacao>
+                  <remunPerApur>
+                    <matricula>MAT-9821</matricula>
+                    <!-- Rubrica 1000: Salario Base (Provento) -->
+                    <itensRemun>
+                      <codRubr>1000</codRubr>
+                      <ideTabRubr>TAB01</ideTabRubr>
+                      <qtdRubr>30</qtdRubr>
+                      <fatorRubr>1.00</fatorRubr>
+                      <vrUnit>4500.00</vrUnit>
+                      <vrRubr>4500.00</vrRubr>
+                      <indApurIR>0</indApurIR>
+                    </itensRemun>
+                    <!-- Rubrica 1005: Adicional Noturno -->
+                    <itensRemun>
+                      <codRubr>1005</codRubr>
+                      <ideTabRubr>TAB01</ideTabRubr>
+                      <qtdRubr>20</qtdRubr>
+                      <fatorRubr>0.20</fatorRubr>
+                      <vrUnit>18.00</vrUnit>
+                      <vrRubr>360.00</vrRubr>
+                      <indApurIR>0</indApurIR>
+                    </itensRemun>
+                    <!-- Rubrica 9001: Desconto Vale Transporte -->
+                    <itensRemun>
+                      <codRubr>9001</codRubr>
+                      <ideTabRubr>TAB01</ideTabRubr>
+                      <vrRubr>270.00</vrRubr>
+                      <indApurIR>0</indApurIR>
+                    </itensRemun>
+                  </remunPerApur>
+                </ideEstabLot>
+              </infoPerApur>
+            </dmDev>
+          </evtRemun>
+        </eSocial>
+      </evento>
+    </eventos>
+  </envioLoteEventos>
+</eSocial>

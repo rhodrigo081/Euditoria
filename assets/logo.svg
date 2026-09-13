@@ -1,0 +1,25 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" width="240" height="60">
+  <defs>
+    <linearGradient id="euditoriaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="checkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+  <!-- Shield Icon -->
+  <g transform="translate(10, 8)">
+    <path d="M22 2 L40 9 V24 C40 35 22 42 22 42 C22 42 4 35 4 24 V9 Z" fill="url(#euditoriaGrad)" />
+    <!-- Checkmark inside shield -->
+    <path d="M14 22 L19 27 L30 15" stroke="url(#checkGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  </g>
+  <!-- Brand Text -->
+  <text x="64" y="32" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="24" fill="#0f172a">
+    Eu<tspan fill="#0284c7">ditoria</tspan>
+  </text>
+  <text x="65" y="46" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="9" fill="#64748b" letter-spacing="1.5">
+    AUDITORIA &amp; GOVERNANÇA ESOCIAL
+  </text>
+</svg>
