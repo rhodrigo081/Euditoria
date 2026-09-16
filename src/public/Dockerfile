@@ -1,13 +1,15 @@
 # ==========================================
-# Multi-stage Build para o Frontend Euditoria
+# Multi-stage Build para o Frontend React
 # ==========================================
 FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install
+# Aproveita o cache do Docker copiando apenas os manifestos primeiro
+COPY package.json package-lock.json* ./
+RUN npm ci
 
+# Copia o código-fonte e gera o build de produção
 COPY . .
 RUN npm run build
 
@@ -16,13 +18,13 @@ RUN npm run build
 # ==========================================
 FROM nginx:1.27-alpine
 
-# Remove configuração padrão do Nginx
+# Remove a configuração padrão
 RUN rm -rf /etc/nginx/conf.d/*
 
-# Copia configuração customizada com proxy reverso e headers de segurança
+# Copia configuração customizada
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copia os artefatos compilados do React
+# Copia os artefatos compilados
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 3000

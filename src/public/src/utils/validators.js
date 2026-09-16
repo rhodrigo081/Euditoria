@@ -25,6 +25,36 @@ export function validateCpf(cpf) {
   return parseInt(clean.charAt(9), 10) === dig1 && parseInt(clean.charAt(10), 10) === dig2;
 }
 
+export function validateCnpj(cnpj) {
+  const clean = unmask(cnpj);
+  if (clean.length !== 14) return false;
+  if (/^(\d)\1{13}$/.test(clean)) return false;
+
+  let tamanho = clean.length - 2;
+  let numeros = clean.substring(0, tamanho);
+  let digitos = clean.substring(tamanho);
+  let soma = 0;
+  let pos = tamanho - 7;
+
+  for (let i = tamanho; i >= 1; i--) {
+    soma += parseInt(numeros.charAt(tamanho - i), 10) * pos--;
+    if (pos < 2) pos = 9;
+  }
+  let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+  if (resultado !== parseInt(digitos.charAt(0), 10)) return false;
+
+  tamanho = tamanho + 1;
+  numeros = clean.substring(0, tamanho);
+  soma = 0;
+  pos = tamanho - 7;
+  for (let i = tamanho; i >= 1; i--) {
+    soma += parseInt(numeros.charAt(tamanho - i), 10) * pos--;
+    if (pos < 2) pos = 9;
+  }
+  resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+  return resultado === parseInt(digitos.charAt(1), 10);
+}
+
 export function validateEmail(email) {
   if (!email) return false;
   const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

@@ -1,6 +1,6 @@
 # Euditoria — Plataforma Integrada de Governança e Auditoria Prévia eSocial
 
-O **Euditoria** é uma plataforma corporativa para governança, validação e auditoria prévia de obrigações trabalhistas, fiscais e previdenciárias vinculadas ao **eSocial**. O sistema automatiza a recepção de lotes XML, a validação de conformidade estrita contra esquemas XSD vigentes, o cruzamento da linha do tempo funcional dos colaboradores e a apuração da memória de cálculo de tributos (INSS, FGTS e IRRF) com reconstituição dos totalizadores oficiais (**S-5001**, **S-5002**, **S-5003**, **S-5011** e **S-5013**).
+O **Euditoria** é uma plataforma corporativa para governança, validação e auditoria prévia de obrigações trabalhistas, fiscais e previdenciárias. O sistema automatiza a recepção de lotes XML, a validação de conformidade estrita contra esquemas XSD vigentes, o cruzamento da linha do tempo funcional dos colaboradores e a apuração da memória de cálculo de tributos (INSS, FGTS e IRRF) com reconstituição dos totalizadores oficiais (**S-5001**, **S-5002**, **S-5003**, **S-5011** e **S-5013**).
 
 ---
 

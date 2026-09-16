@@ -47,7 +47,7 @@ export default function TimelinePage({ selectedTenant }) {
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-5 rounded-2xl">
         <div>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 uppercase tracking-widest border border-sky-500/20">
-            RF05 – Rastreabilidade da Linha do Tempo
+            Rastreabilidade da Linha do Tempo
           </span>
           <h2 class="text-xl font-bold text-white mt-1">Histórico Cronológico e Auditoria de Precedência</h2>
           <p class="text-xs text-slate-400">

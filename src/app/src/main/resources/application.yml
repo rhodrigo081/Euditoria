@@ -12,6 +12,19 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 25MB
+  datasource:
+    url: jdbc:postgresql://${SUPABASE_DB_HOST}:${SUPABASE_DB_PORT:5432}/postgres?sslmode=require
+    username: ${SUPABASE_DB_USER}
+    password: ${SUPABASE_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
 
 euditoria:
   security:
@@ -25,3 +38,4 @@ euditoria:
     max-pool-size: 16
     queue-capacity: 100
     thread-name-prefix: "EuditoriaAsync-"
+

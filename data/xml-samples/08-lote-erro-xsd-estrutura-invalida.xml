@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ERRO ESTRUTURAL: Raiz nao e eSocial e contem tags nao fechadas -->
+<arquivoInvalido xmlns="http://www.esocial.gov.br/schema/lote/invalido">
+  <loteComFalha>
+    <ideEmpregador>
+      <tpInsc>999</tpInsc>
+      <nrInsc>00000000000000</nrInsc>
+    </ideEmpregador>
+    <eventos>
+      <evento Id="ID_INVALIDO_SEM_PADRAO">
+        <tagDesconhecida>Valor Nao Permitido Pelo Schema XSD</tagDesconhecida>
+        <!-- Tag cpfTrab com letras -->
+        <cpfTrab>CPF_COM_LETRAS</cpfTrab>
+      <!-- Tag de fechamento faltando intencionalmente para teste XSD -->
+    </eventos>
+  </loteComFalha>
+</arquivoInvalido>

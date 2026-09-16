@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eSocial xmlns="http://www.esocial.gov.br/schema/lote/eventos/envio/v1_1_1">
+  <envioLoteEventos grupo="1">
+    <ideEmpregador>
+      <tpInsc>1</tpInsc>
+      <nrInsc>12345678000195</nrInsc>
+    </ideEmpregador>
+    <eventos>
+      <evento Id="ID1123456780001952026091300002206">
+        <eSocial xmlns="http://www.esocial.gov.br/schema/evt/evtAltContratual/v_S_01_02_00">
+          <evtAltContratual Id="ID1123456780001952026091300002206">
+            <ideEvento>
+              <tpAmb>1</tpAmb>
+              <procEmi>1</procEmi>
+              <verProc>2026.1</verProc>
+            </ideEvento>
+            <ideEmpregador>
+              <tpInsc>1</tpInsc>
+              <nrInsc>12345678000195</nrInsc>
+            </ideEmpregador>
+            <ideVinculo>
+              <cpfTrab>52998224725</cpfTrab>
+              <matricula>MAT-9821</matricula>
+            </ideVinculo>
+            <altContratual>
+              <dtAlteracao>2024-03-01</dtAlteracao>
+              <infoContrato>
+                <codCargo>ANALISTA-PLENO</codCargo>
+                <remuneracao>
+                  <vrSalFx>5800.00</vrSalFx>
+                  <undSalFixo>7</undSalFixo>
+                  <dscSalVar>Gratificação por mérito de 15%</dscSalVar>
+                </remuneracao>
+              </infoContrato>
+            </altContratual>
+          </evtAltContratual>
+        </eSocial>
+      </evento>
+    </eventos>
+  </envioLoteEventos>
+</eSocial>

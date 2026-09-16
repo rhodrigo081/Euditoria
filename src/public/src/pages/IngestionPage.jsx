@@ -129,7 +129,7 @@ export default function IngestionPage({ setTab, selectedTenant, onBatchCreated }
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
         <div class="border-b border-slate-800 pb-4 mb-6">
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 uppercase tracking-widest border border-sky-500/20">
-            RF01 – Ingestão Automatizada
+            Ingestão Automatizada
           </span>
           <h2 class="text-xl font-bold text-white mt-2">Recepção de Lote e Início da Auditoria Prévia</h2>
           <p class="text-xs text-slate-400 mt-1">

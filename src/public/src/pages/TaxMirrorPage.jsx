@@ -82,7 +82,7 @@ export default function TaxMirrorPage({ selectedBatch, selectedTenant }) {
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-5 rounded-2xl">
         <div>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 uppercase tracking-widest border border-sky-500/20">
-            RF03 – Motor de Apuração Fiscal
+            Motor de Apuração Fiscal
           </span>
           <h2 class="text-xl font-bold text-white mt-1">Espelho de Conferência e Apuração de Totalizadores</h2>
           <p class="text-xs text-slate-400">
@@ -108,6 +108,16 @@ export default function TaxMirrorPage({ selectedBatch, selectedTenant }) {
           </select>
         </div>
       </div>
+
+      {!taxMirror && (
+        <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-2 max-w-xl mx-auto">
+          <Scale class="w-10 h-10 text-slate-500 mx-auto" />
+          <h3 class="text-sm font-bold text-white">Nenhum espelho fiscal disponível para este lote</h3>
+          <p class="text-xs text-slate-400">
+            Os espelhos fiscais (S-5001, S-5002, S-5003, S-5011 e S-5013) são apurados automaticamente a partir da auditoria prévia de um lote XML.
+          </p>
+        </div>
+      )}
 
       {taxMirror && (
         <div class="space-y-6">

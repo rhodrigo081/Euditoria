@@ -1,7 +1,4 @@
 services:
-  # ==========================================
-  # Backend: Java / Spring Boot 3.3
-  # ==========================================
   euditoria-backend:
     build:
       context: ./src/app
@@ -13,6 +10,9 @@ services:
       - SERVER_PORT=8080
       - EUDITORIA_RATELIMIT_ENABLED=true
       - EUDITORIA_CONFIDENTIALITY_STRICT=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://${SUPABASE_DB_HOST}:${SUPABASE_DB_PORT}/postgres?sslmode=require
+      - SPRING_DATASOURCE_USERNAME=${SUPABASE_DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${SUPABASE_DB_PASSWORD}
     networks:
       - euditoria-network
     restart: unless-stopped
@@ -21,11 +21,7 @@ services:
       interval: 15s
       timeout: 5s
       retries: 3
-      start_period: 20s
-
-  # ==========================================
-  # Frontend: React 18 + Vite + Nginx Reverse Proxy
-  # ==========================================
+      start_period: 40s
   euditoria-frontend:
     build:
       context: ./src/public

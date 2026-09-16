@@ -93,11 +93,6 @@ export const api = {
     return fetchWithTenant(`/certificates/${certificateId}`, {}, tenantId);
   },
 
-  // RF05: Linha do Tempo Funcional do Trabalhador
-  async getWorkerTimeline(cpf, tenantId) {
-    return fetchWithTenant(`/workers/${cpf}/timeline`, {}, tenantId);
-  },
-
   // RF07: Gestão de Cotas e Tenants
   async getTenantUsage(tenantId) {
     return fetchWithTenant(`/tenants/${tenantId}/usage`, {}, tenantId);
@@ -105,5 +100,30 @@ export const api = {
 
   async checkHealth() {
     return fetchWithTenant('/health');
+  },
+
+  // RF-AUTH: Autenticação & Cadastro de Empresas no Backend
+  async registerCompany(companyData) {
+    return fetchWithTenant('/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(companyData),
+    });
+  },
+
+  async loginCompany(credentials) {
+    return fetchWithTenant('/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials),
+    });
+  },
+
+  async getRegisteredCompanies() {
+    return fetchWithTenant('/auth/companies');
+  },
+
+  async verifyCompany(identifier) {
+    return fetchWithTenant(`/auth/verify?identifier=${encodeURIComponent(identifier)}`);
   },
 };

@@ -85,7 +85,7 @@ export default function TenantsPage({ selectedTenant, setTenant }) {
       {/* Top Header */}
       <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
         <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 uppercase tracking-widest border border-sky-500/20">
-          RF07 – Gestão Multi-Tenant &amp; Controle de Cotas
+         Gestão Multi-Tenant &amp; Controle de Cotas
         </span>
         <h2 class="text-xl font-bold text-white mt-1">Governança de Planos, Taxas de API e Retenção</h2>
         <p class="text-xs text-slate-400">

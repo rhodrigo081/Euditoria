@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eSocial xmlns="http://www.esocial.gov.br/schema/lote/eventos/envio/v1_1_1">
+  <envioLoteEventos grupo="1">
+    <ideEmpregador>
+      <tpInsc>1</tpInsc>
+      <nrInsc>12345678000195</nrInsc>
+    </ideEmpregador>
+    <eventos>
+      <evento Id="ID1123456780001952026091300001000">
+        <eSocial xmlns="http://www.esocial.gov.br/schema/evt/evtInfoEmpregador/v_S_01_02_00">
+          <evtInfoEmpregador Id="ID1123456780001952026091300001000">
+            <ideEvento>
+              <tpAmb>1</tpAmb>
+              <procEmi>1</procEmi>
+              <verProc>2026.1</verProc>
+            </ideEvento>
+            <ideEmpregador>
+              <tpInsc>1</tpInsc>
+              <nrInsc>12345678000195</nrInsc>
+            </ideEmpregador>
+            <infoEmpregador>
+              <inclusao>
+                <idePeriodo>
+                  <iniValid>2026-01</iniValid>
+                </idePeriodo>
+                <infoCadastro>
+                  <classTrib>99</classTrib>
+                  <indCoop>0</indCoop>
+                  <indConstr>0</indConstr>
+                  <indDesFolha>0</indDesFolha>
+                  <indOptRegEletron>1</indOptRegEletron>
+                  <contato>
+                    <nmCtt>Eduardo Rocha</nmCtt>
+                    <cpfCtt>52998224725</cpfCtt>
+                    <foneFixo>1133334444</foneFixo>
+                    <email>fiscal@techbrasil.com.br</email>
+                  </contato>
+                </infoCadastro>
+              </inclusao>
+            </infoEmpregador>
+          </evtInfoEmpregador>
+        </eSocial>
+      </evento>
+    </eventos>
+  </envioLoteEventos>
+</eSocial>

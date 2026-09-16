@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eSocial xmlns="http://www.esocial.gov.br/schema/lote/eventos/envio/v1_1_1">
+  <envioLoteEventos grupo="1">
+    <ideEmpregador>
+      <tpInsc>1</tpInsc>
+      <nrInsc>12345678000195</nrInsc>
+    </ideEmpregador>
+    <eventos>
+      <evento Id="ID1123456780001952026091300002200">
+        <eSocial xmlns="http://www.esocial.gov.br/schema/evt/evtAdmissao/v_S_01_02_00">
+          <evtAdmissao Id="ID1123456780001952026091300002200">
+            <ideEvento>
+              <indRetif>1</indRetif>
+              <tpAmb>1</tpAmb>
+              <procEmi>1</procEmi>
+              <verProc>2026.1</verProc>
+            </ideEvento>
+            <ideEmpregador>
+              <tpInsc>1</tpInsc>
+              <nrInsc>12345678000195</nrInsc>
+            </ideEmpregador>
+            <trabalhador>
+              <cpfTrab>52998224725</cpfTrab>
+              <nmTrab>Carlos Eduardo da Silva</nmTrab>
+              <sexo>M</sexo>
+              <racaCor>1</racaCor>
+              <estCiv>1</estCiv>
+              <grauInstr>09</grauInstr>
+              <dtNascto>1992-05-14</dtNascto>
+            </trabalhador>
+            <vinculo>
+              <matricula>MAT-9821</matricula>
+              <tpRegTrab>1</tpRegTrab>
+              <tpRegPrev>1</tpRegPrev>
+              <dtAdm>2022-01-10</dtAdm>
+              <infoContrato>
+                <codCargo>ANALISTA-01</codCargo>
+                <cboCargo>212405</cboCargo>
+                <remuneracao>
+                  <vrSalFx>4500.00</vrSalFx>
+                  <undSalFixo>7</undSalFixo>
+                </remuneracao>
+              </infoContrato>
+            </vinculo>
+          </evtAdmissao>
+        </eSocial>
+      </evento>
+    </eventos>
+  </envioLoteEventos>
+</eSocial>
