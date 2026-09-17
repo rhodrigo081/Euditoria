@@ -5,33 +5,35 @@ import com.euditoria.dto.CompanyLoginDTO;
 import com.euditoria.dto.CompanyRegistrationDTO;
 import com.euditoria.exception.BusinessException;
 import com.euditoria.exception.ResourceNotFoundException;
-import com.euditoria.mock.MockDataStore;
 import com.euditoria.model.RegisteredCompany;
 import com.euditoria.model.Tenant;
 import com.euditoria.model.TenantPlan;
+import com.euditoria.repository.RegisteredCompanyRepository;
+import com.euditoria.repository.TenantRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CompanyAuthService {
 
-    private final MockDataStore mockDataStore;
-    private final Map<String, RegisteredCompany> companiesByEmail = new ConcurrentHashMap<>();
-    private final Map<String, RegisteredCompany> companiesByDocument = new ConcurrentHashMap<>();
+    private final RegisteredCompanyRepository companyRepository;
+    private final TenantRepository tenantRepository;
 
-    public CompanyAuthService(MockDataStore mockDataStore) {
-        this.mockDataStore = mockDataStore;
+    public CompanyAuthService(RegisteredCompanyRepository companyRepository, TenantRepository tenantRepository) {
+        this.companyRepository = companyRepository;
+        this.tenantRepository = tenantRepository;
     }
 
     /**
-     * Registra uma nova empresa ou empregador no banco de dados do sistema.
+     * Registra uma nova empresa ou empregador no banco de dados do sistema com atomicidade transacional.
      */
+    @Transactional
     public RegisteredCompany register(CompanyRegistrationDTO dto) {
         if (!dto.isAgreedLgpd()) {
             throw new BusinessException("LGPD_NOT_ACCEPTED", 
@@ -41,12 +43,12 @@ public class CompanyAuthService {
         String normalizedEmail = dto.getEmail().trim().toLowerCase();
         String normalizedDoc = sanitizeDocument(dto.getDocumentNumber());
 
-        if (companiesByEmail.containsKey(normalizedEmail)) {
+        if (companyRepository.existsByEmailIgnoreCase(normalizedEmail)) {
             throw new BusinessException("EMAIL_ALREADY_REGISTERED", 
                 "O e-mail informado já está cadastrado no sistema. Utilize a aba de login para acessar sua conta.");
         }
 
-        if (companiesByDocument.containsKey(normalizedDoc)) {
+        if (companyRepository.existsByDocumentNumber(normalizedDoc)) {
             throw new BusinessException("DOCUMENT_ALREADY_REGISTERED", 
                 "O documento informado (CNPJ/CPF) já possui cadastro ativo no sistema.");
         }
@@ -67,10 +69,9 @@ public class CompanyAuthService {
                 Instant.now()
         );
 
-        companiesByEmail.put(normalizedEmail, company);
-        companiesByDocument.put(normalizedDoc, company);
+        RegisteredCompany savedCompany = companyRepository.save(company);
 
-        // Registra o Tenant correspondente para permitir auditoria e governança imediata
+        // Registra e persiste o Tenant correspondente para permitir auditoria e governança imediata
         Tenant tenant = new Tenant(
                 companyId,
                 company.getCompanyName(),
@@ -79,15 +80,16 @@ public class CompanyAuthService {
                 TenantPlan.PROFESSIONAL,
                 0
         );
-        mockDataStore.getTenants().put(companyId, tenant);
+        tenantRepository.save(tenant);
 
-        return company;
+        return savedCompany;
     }
 
     /**
-     * Autentica a empresa baseando-se estritamente nos dados cadastrados.
+     * Autentica a empresa baseando-se estritamente nos dados cadastrados no banco relacional.
      * Rejeita prontamente tentativas com e-mails/documentos não cadastrados ou senhas incorretas.
      */
+    @Transactional(readOnly = true)
     public AuthResponseDTO login(CompanyLoginDTO dto) {
         String identifier = dto.getEmail().trim();
         RegisteredCompany company = findByIdentifier(identifier);
@@ -109,25 +111,27 @@ public class CompanyAuthService {
     }
 
     /**
-     * Consulta empresa por e-mail ou documento sanitizado.
+     * Consulta empresa por e-mail ou documento sanitizado consultando o repositório JPA.
      */
+    @Transactional(readOnly = true)
     public RegisteredCompany findByIdentifier(String identifier) {
         if (identifier == null || identifier.isBlank()) return null;
         
         String cleanEmail = identifier.trim().toLowerCase();
-        RegisteredCompany byEmail = companiesByEmail.get(cleanEmail);
-        if (byEmail != null) return byEmail;
+        Optional<RegisteredCompany> byEmail = companyRepository.findByEmailIgnoreCase(cleanEmail);
+        if (byEmail.isPresent()) return byEmail.get();
 
         String cleanDoc = sanitizeDocument(identifier);
-        return companiesByDocument.get(cleanDoc);
+        return companyRepository.findByDocumentNumber(cleanDoc).orElse(null);
     }
 
     /**
      * Retorna todas as empresas cadastradas (sanitizadas para segurança).
      */
+    @Transactional(readOnly = true)
     public List<RegisteredCompany> getAllCompanies() {
         List<RegisteredCompany> list = new ArrayList<>();
-        for (RegisteredCompany original : companiesByEmail.values()) {
+        for (RegisteredCompany original : companyRepository.findAll()) {
             RegisteredCompany sanitized = new RegisteredCompany(
                     original.getId(),
                     original.getUserType(),

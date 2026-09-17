@@ -1,10 +1,12 @@
 package com.euditoria.service;
 
 import com.euditoria.dto.WorkerTimelineDTO;
-import com.euditoria.mock.MockDataStore;
 import com.euditoria.model.TimelineEvent;
 import com.euditoria.model.Worker;
+import com.euditoria.repository.TimelineEventRepository;
+import com.euditoria.repository.WorkerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,24 +15,30 @@ import java.util.List;
 @Service
 public class TimelineAuditService {
 
-    private final MockDataStore mockDataStore;
+    private final WorkerRepository workerRepository;
+    private final TimelineEventRepository timelineEventRepository;
 
-    public TimelineAuditService(MockDataStore mockDataStore) {
-        this.mockDataStore = mockDataStore;
+    public TimelineAuditService(WorkerRepository workerRepository, TimelineEventRepository timelineEventRepository) {
+        this.workerRepository = workerRepository;
+        this.timelineEventRepository = timelineEventRepository;
     }
 
+    @Transactional
     public WorkerTimelineDTO getTimelineForWorker(String cpf) {
         String cleanCpf = (cpf != null) ? cpf.replaceAll("\\D", "") : "";
-        Worker worker = mockDataStore.getWorkers().get(cleanCpf);
+        Worker worker = workerRepository.findByCpf(cleanCpf).orElse(null);
 
-        List<TimelineEvent> events = mockDataStore.getWorkerTimelines().getOrDefault(cleanCpf, new ArrayList<>());
+        List<TimelineEvent> events = timelineEventRepository.findByCpfOrderByEventDateAsc(cleanCpf);
 
         if (worker == null && events.isEmpty()) {
-            // Cria representação dinâmica mockada caso o CPF seja novo
-            worker = new Worker(cleanCpf, "Colaborador Auditado eSocial", "MAT-" + cleanCpf.substring(Math.max(0, cleanCpf.length() - 4)), LocalDate.of(2023, 3, 1));
+            // Cria representação dinâmica e persiste no banco de dados caso o CPF seja novo
+            worker = new Worker(cleanCpf, "Colaborador Auditado eSocial", "MAT-" + (cleanCpf.length() >= 4 ? cleanCpf.substring(cleanCpf.length() - 4) : "0001"), LocalDate.of(2023, 3, 1));
+            workerRepository.save(worker);
+
             events = new ArrayList<>();
-            events.add(new TimelineEvent("TL-NEW-1", cleanCpf, worker.getNome(), "S-2200", "Cadastramento Inicial e Admissão do Trabalhador", LocalDate.of(2023, 3, 1), "REC-AUTO-100", false, null));
-            events.add(new TimelineEvent("TL-NEW-2", cleanCpf, worker.getNome(), "S-1200", "Remuneração Mensal do Período Vigente", LocalDate.of(2026, 9, 1), "REC-AUTO-200", false, null));
+            events.add(new TimelineEvent("TL-" + cleanCpf + "-1", cleanCpf, worker.getNome(), "S-2200", "Cadastramento Inicial e Admissão do Trabalhador", LocalDate.of(2023, 3, 1), "REC-AUTO-100", false, null));
+            events.add(new TimelineEvent("TL-" + cleanCpf + "-2", cleanCpf, worker.getNome(), "S-1200", "Remuneração Mensal do Período Vigente", LocalDate.of(2026, 9, 1), "REC-AUTO-200", false, null));
+            timelineEventRepository.saveAll(events);
         }
 
         boolean hasViolations = events.stream().anyMatch(TimelineEvent::isPrecedenceViolation);

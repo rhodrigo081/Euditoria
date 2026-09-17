@@ -1,16 +1,41 @@
 package com.euditoria.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "timeline_events", indexes = {
+        @Index(name = "idx_event_cpf", columnList = "cpf"),
+        @Index(name = "idx_event_date", columnList = "event_date")
+})
 public class TimelineEvent {
+
+    @Id
+    @Column(name = "id", length = 64)
     private String id;
+
+    @Column(name = "cpf", nullable = false, length = 14)
     private String cpf;
+
+    @Column(name = "worker_name", nullable = false, length = 255)
     private String workerName;
+
+    @Column(name = "event_type", nullable = false, length = 20)
     private String eventType; // S-2200, S-2205, S-2206, S-2230, S-1200, S-2299
+
+    @Column(name = "description", nullable = false, length = 255)
     private String description;
+
+    @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
+
+    @Column(name = "receipt_number", length = 64)
     private String receiptNumber;
+
+    @Column(name = "precedence_violation", nullable = false)
     private boolean precedenceViolation;
+
+    @Column(name = "violation_details", length = 500)
     private String violationDetails;
 
     public TimelineEvent() {}

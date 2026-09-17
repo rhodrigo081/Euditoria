@@ -1,23 +1,54 @@
 package com.euditoria.model;
 
+import jakarta.persistence.*;
 import java.time.Instant;
 
 /**
  * Entidade que representa uma empresa ou empregador cadastrado no sistema.
  * Garante persistência e rastreabilidade para auditoria e autenticação.
  */
+@Entity
+@Table(name = "registered_companies", indexes = {
+        @Index(name = "idx_company_doc", columnList = "document_number"),
+        @Index(name = "idx_company_email", columnList = "email")
+})
 public class RegisteredCompany {
+
+    @Id
+    @Column(name = "id", length = 64)
     private String id;
+
+    @Column(name = "user_type", nullable = false, length = 10)
     private String userType; // 'PJ' ou 'PF'
+
+    @Column(name = "document_number", nullable = false, unique = true, length = 20)
     private String documentNumber; // CNPJ ou CPF
+
+    @Column(name = "company_name", nullable = false, length = 255)
     private String companyName; // Razão Social ou Nome Completo
+
+    @Column(name = "responsavel_nome", nullable = false, length = 255)
     private String responsavelNome;
+
+    @Column(name = "telefone", length = 30)
     private String telefone;
+
+    @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
+
+    @Column(name = "password_hash", nullable = false, length = 128)
     private String passwordHash;
+
+    @Column(name = "agreed_lgpd", nullable = false)
     private boolean agreedLgpd;
+
+    @Column(name = "agreed_lgpd_at")
     private Instant agreedLgpdAt;
+
+    @Column(name = "registered_at", nullable = false)
     private Instant registeredAt;
+
+    @Column(name = "access_role", length = 30)
     private String accessRole; // Padrão: 'TITULAR'
 
     public RegisteredCompany() {

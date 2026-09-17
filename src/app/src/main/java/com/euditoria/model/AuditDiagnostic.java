@@ -1,13 +1,37 @@
 package com.euditoria.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "audit_diagnostics")
 public class AuditDiagnostic {
+
+    @Id
+    @Column(name = "id", length = 64)
     private String id;
+
+    @Column(name = "line_number")
     private int lineNumber;
+
+    @Column(name = "column_number")
     private int columnNumber;
+
+    @Column(name = "node_name", length = 100)
     private String nodeName;
+
+    @Column(name = "error_code", length = 100)
     private String errorCode;
+
+    @Lob
+    @Column(name = "message", columnDefinition = "TEXT")
     private String message;
+
+    @Lob
+    @Column(name = "suggested_fix", columnDefinition = "TEXT")
     private String suggestedFix;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "severity", nullable = false, length = 20)
     private DiagnosticSeverity severity;
 
     public AuditDiagnostic() {}

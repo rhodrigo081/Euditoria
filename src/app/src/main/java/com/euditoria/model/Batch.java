@@ -1,19 +1,50 @@
 package com.euditoria.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "batches", indexes = {
+        @Index(name = "idx_batch_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_batch_upload", columnList = "upload_timestamp")
+})
 public class Batch {
+
+    @Id
+    @Column(name = "batch_id", length = 64)
     private String batchId;
+
+    @Column(name = "tenant_id", nullable = false, length = 64)
     private String tenantId;
+
+    @Column(name = "file_name", nullable = false)
     private String fileName;
+
+    @Column(name = "upload_timestamp", nullable = false)
     private LocalDateTime uploadTimestamp;
+
+    @Lob
+    @Column(name = "xml_content", columnDefinition = "TEXT")
     private String xmlContent;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 30)
     private BatchStatus status;
+
+    @Column(name = "events_count", nullable = false)
     private int eventsCount;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "batch_id")
     private List<AuditDiagnostic> diagnostics = new ArrayList<>();
+
+    @Embedded
     private TaxMirror taxMirror;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "certificate_id")
     private Certificate certificate;
 
     public Batch() {}

@@ -1,36 +1,73 @@
 package com.euditoria.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Lob;
 import java.math.BigDecimal;
 
+@Embeddable
 public class TaxMirror {
     // S-5001: INSS Segurados
+    @Column(name = "tax_base_inss", precision = 15, scale = 2)
     private BigDecimal baseCalculoInssSegurado = BigDecimal.ZERO;
+
+    @Column(name = "tax_inss_declarado", precision = 15, scale = 2)
     private BigDecimal inssSeguradoDeclarado = BigDecimal.ZERO;
+
+    @Column(name = "tax_inss_apurado", precision = 15, scale = 2)
     private BigDecimal inssSeguradoApurado = BigDecimal.ZERO;
+
+    @Column(name = "tax_inss_divergencia", precision = 15, scale = 2)
     private BigDecimal divergenciaInssSegurado = BigDecimal.ZERO;
 
     // S-5002: IRRF
+    @Column(name = "tax_base_irrf", precision = 15, scale = 2)
     private BigDecimal baseCalculoIrrf = BigDecimal.ZERO;
+
+    @Column(name = "tax_irrf_declarado", precision = 15, scale = 2)
     private BigDecimal irrfDeclarado = BigDecimal.ZERO;
+
+    @Column(name = "tax_irrf_apurado", precision = 15, scale = 2)
     private BigDecimal irrfApurado = BigDecimal.ZERO;
+
+    @Column(name = "tax_irrf_divergencia", precision = 15, scale = 2)
     private BigDecimal divergenciaIrrf = BigDecimal.ZERO;
 
     // S-5003: FGTS do Trabalhador
+    @Column(name = "tax_base_fgts", precision = 15, scale = 2)
     private BigDecimal baseCalculoFgts = BigDecimal.ZERO;
+
+    @Column(name = "tax_fgts_declarado", precision = 15, scale = 2)
     private BigDecimal fgtsDeclarado = BigDecimal.ZERO;
+
+    @Column(name = "tax_fgts_apurado", precision = 15, scale = 2)
     private BigDecimal fgtsApurado = BigDecimal.ZERO;
+
+    @Column(name = "tax_fgts_divergencia", precision = 15, scale = 2)
     private BigDecimal divergenciaFgts = BigDecimal.ZERO;
 
     // S-5011: Contribuições Sociais Patronais, RAT e Terceiros
+    @Column(name = "tax_patronal_apurada", precision = 15, scale = 2)
     private BigDecimal patronalPrevidenciariaApurada = BigDecimal.ZERO; // 20%
+
+    @Column(name = "tax_rat_apurado", precision = 15, scale = 2)
     private BigDecimal ratApurado = BigDecimal.ZERO; // RAT * FAP
+
+    @Column(name = "tax_terceiros_apurado", precision = 15, scale = 2)
     private BigDecimal outrasEntidadesTerceirosApurado = BigDecimal.ZERO; // 5.8%
+
+    @Column(name = "tax_total_patronal_apurado", precision = 15, scale = 2)
     private BigDecimal totalPatronalApurado = BigDecimal.ZERO;
 
     // S-5013: FGTS Consolidado Empregador
+    @Column(name = "tax_total_fgts_consolidado", precision = 15, scale = 2)
     private BigDecimal totalFgtsConsolidadoApurado = BigDecimal.ZERO;
 
+    @Column(name = "tax_possui_divergencias")
     private boolean possuiDivergencias = false;
+
+    @Lob
+    @Column(name = "tax_memoria_calculo", columnDefinition = "TEXT")
     private String memoriaCalculoTexto;
 
     public TaxMirror() {}

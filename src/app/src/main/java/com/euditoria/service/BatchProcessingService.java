@@ -2,10 +2,11 @@ package com.euditoria.service;
 
 import com.euditoria.dto.BatchUploadResponseDTO;
 import com.euditoria.exception.ResourceNotFoundException;
-import com.euditoria.mock.MockDataStore;
 import com.euditoria.model.*;
-import org.springframework.scheduling.annotation.Async;
+import com.euditoria.repository.BatchRepository;
+import com.euditoria.repository.CertificateRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,20 +19,23 @@ import java.util.regex.Pattern;
 @Service
 public class BatchProcessingService {
 
-    private final MockDataStore mockDataStore;
+    private final BatchRepository batchRepository;
+    private final CertificateRepository certificateRepository;
     private final XsdValidationService xsdValidationService;
     private final BusinessRuleService businessRuleService;
     private final TaxCalculationService taxCalculationService;
     private final CertificateService certificateService;
     private final TenantQuotaService tenantQuotaService;
 
-    public BatchProcessingService(MockDataStore mockDataStore,
+    public BatchProcessingService(BatchRepository batchRepository,
+                                  CertificateRepository certificateRepository,
                                   XsdValidationService xsdValidationService,
                                   BusinessRuleService businessRuleService,
                                   TaxCalculationService taxCalculationService,
                                   CertificateService certificateService,
                                   TenantQuotaService tenantQuotaService) {
-        this.mockDataStore = mockDataStore;
+        this.batchRepository = batchRepository;
+        this.certificateRepository = certificateRepository;
         this.xsdValidationService = xsdValidationService;
         this.businessRuleService = businessRuleService;
         this.taxCalculationService = taxCalculationService;
@@ -39,6 +43,7 @@ public class BatchProcessingService {
         this.tenantQuotaService = tenantQuotaService;
     }
 
+    @Transactional
     public BatchUploadResponseDTO registerBatch(String fileName, String xmlContent, String tenantId) {
         String safeTenant = (tenantId == null || tenantId.isBlank()) ? "tenant-alpha" : tenantId;
         String batchId = "LOTE-" + LocalDateTime.now().getYear() + String.format("%02d", LocalDateTime.now().getMonthValue()) + "-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
@@ -47,38 +52,40 @@ public class BatchProcessingService {
         tenantQuotaService.checkAndIncrementQuota(safeTenant, Math.max(1, eventsCount));
 
         Batch batch = new Batch(batchId, safeTenant, fileName, LocalDateTime.now(), xmlContent, BatchStatus.RECEIVED, Math.max(1, eventsCount));
-        mockDataStore.getBatches().put(batchId, batch);
 
         // Processa as validações e auditoria
         processBatchAudit(batch);
 
+        // Persiste o lote, diagnósticos associados e espelho fiscal atomicamente
+        Batch savedBatch = batchRepository.save(batch);
+
         return new BatchUploadResponseDTO(
-                batch.getBatchId(),
-                batch.getStatus().name(),
+                savedBatch.getBatchId(),
+                savedBatch.getStatus().name(),
                 "Lote recepcionado com sucesso e encaminhado para o pipeline de auditoria prévia.",
-                batch.getUploadTimestamp(),
-                batch.getEventsCount()
+                savedBatch.getUploadTimestamp(),
+                savedBatch.getEventsCount()
         );
     }
 
+    @Transactional(readOnly = true)
     public Batch getBatch(String batchId) {
-        Batch batch = mockDataStore.getBatches().get(batchId);
-        if (batch == null) {
-            throw new ResourceNotFoundException("Lote com identificador '" + batchId + "' não encontrado.");
-        }
-        return batch;
+        return batchRepository.findById(batchId)
+                .orElseThrow(() -> new ResourceNotFoundException("Lote com identificador '" + batchId + "' não encontrado."));
     }
 
+    @Transactional(readOnly = true)
     public List<Batch> listAllBatches() {
-        return new ArrayList<>(mockDataStore.getBatches().values());
+        return batchRepository.findAllByOrderByUploadTimestampDesc();
     }
 
+    @Transactional
     public Batch reprocessXml(String batchId, String updatedXml) {
         Batch batch = getBatch(batchId);
         batch.setXmlContent(updatedXml);
         batch.setUploadTimestamp(LocalDateTime.now());
         processBatchAudit(batch);
-        return batch;
+        return batchRepository.save(batch);
     }
 
     public void processBatchAudit(Batch batch) {
@@ -181,7 +188,7 @@ public class BatchProcessingService {
                     batch.getXmlContent()
             );
             batch.setCertificate(cert);
-            mockDataStore.getCertificates().put(cert.getCertificateId(), cert);
+            certificateRepository.save(cert);
         } else {
             batch.setStatus(BatchStatus.NON_COMPLIANT);
             batch.setCertificate(null);
