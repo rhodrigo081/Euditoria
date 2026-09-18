@@ -43,6 +43,9 @@ public class CompanyAuthService {
         String normalizedEmail = dto.getEmail().trim().toLowerCase();
         String normalizedDoc = sanitizeDocument(dto.getDocumentNumber());
 
+        // Assegura remoção de qualquer caractere não numérico
+        String cleanPhone = sanitizeDocument(dto.getTelefone());
+
         if (companyRepository.existsByEmailIgnoreCase(normalizedEmail)) {
             throw new BusinessException("EMAIL_ALREADY_REGISTERED", 
                 "O e-mail informado já está cadastrado no sistema. Utilize a aba de login para acessar sua conta.");
@@ -59,10 +62,10 @@ public class CompanyAuthService {
         RegisteredCompany company = new RegisteredCompany(
                 companyId,
                 dto.getUserType() != null ? dto.getUserType() : "PJ",
-                dto.getDocumentNumber().trim(),
+                normalizedDoc,
                 dto.getCompanyName().trim(),
                 dto.getResponsavelNome().trim(),
-                dto.getTelefone() != null ? dto.getTelefone().trim() : "",
+                cleanPhone, // <-- Salva apenas os números no banco
                 normalizedEmail,
                 passwordHash,
                 true,
@@ -71,7 +74,6 @@ public class CompanyAuthService {
 
         RegisteredCompany savedCompany = companyRepository.save(company);
 
-        // Registra e persiste o Tenant correspondente para permitir auditoria e governança imediata
         Tenant tenant = new Tenant(
                 companyId,
                 company.getCompanyName(),
@@ -138,7 +140,7 @@ public class CompanyAuthService {
                     original.getDocumentNumber(),
                     original.getCompanyName(),
                     original.getResponsavelNome(),
-                    original.getTelefone(),
+                    sanitizeDocument(original.getTelefone()),
                     original.getEmail(),
                     null, // Remove hash de senha para segurança
                     original.isAgreedLgpd(),

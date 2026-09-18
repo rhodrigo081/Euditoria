@@ -1,34 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  FileCode2, 
-  AlertTriangle, 
-  AlertCircle, 
-  CheckCircle2, 
-  RefreshCw, 
-  Sparkles, 
-  ShieldAlert,
+import { useState, useEffect, useRef } from "react";
+import {
+  AlertTriangle,
+  AlertCircle,
+  CheckCircle2,
+  Sparkles,
   Terminal,
-  Zap
-} from 'lucide-react';
-import { api } from '../services/api';
+  Zap,
+} from "lucide-react";
+import { api } from "../services/api";
 
-export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatchUpdated }) {
+export default function DiagnosticsPage({
+  selectedBatch,
+  selectedTenant,
+  onBatchUpdated,
+}) {
   const [batches, setBatches] = useState([]);
-  const [currentBatchId, setCurrentBatchId] = useState(selectedBatch?.batchId || '');
+  const [currentBatchId, setCurrentBatchId] = useState(
+    selectedBatch?.batchId || "",
+  );
   const [currentBatch, setCurrentBatch] = useState(selectedBatch || null);
-  const [xmlCode, setXmlCode] = useState('');
+  const [xmlCode, setXmlCode] = useState("");
   const [diagnostics, setDiagnostics] = useState([]);
   const [reprocessing, setReprocessing] = useState(false);
-  const [feedbackMsg, setFeedbackMsg] = useState('');
+  const [feedbackMsg, setFeedbackMsg] = useState("");
+  const lineNumbersRef = useRef(null);
+
+  const handleScroll = (e) => {
+    if (lineNumbersRef.current) {
+      lineNumbersRef.current.scrollTop = e.target.scrollTop;
+    }
+  };
 
   // Carrega a lista de lotes disponíveis
   useEffect(() => {
-    api.getBatches(selectedTenant)
+    api
+      .getBatches(selectedTenant)
       .then((list) => {
         setBatches(list);
         if (!currentBatchId && list.length > 0) {
           // Prefere o lote com erros para demonstrar o editor
-          const nonCompliant = list.find((b) => b.status === 'NON_COMPLIANT') || list[0];
+          const nonCompliant =
+            list.find((b) => b.status === "NON_COMPLIANT") || list[0];
           setCurrentBatchId(nonCompliant.batchId);
           loadBatch(nonCompliant.batchId);
         }
@@ -47,9 +59,9 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
     try {
       const b = await api.getBatchDetails(bId, selectedTenant);
       setCurrentBatch(b);
-      setXmlCode(b.xmlContent || '');
+      setXmlCode(b.xmlContent || "");
       setDiagnostics(b.diagnostics || []);
-      setFeedbackMsg('');
+      setFeedbackMsg("");
     } catch (err) {
       console.error(err);
     }
@@ -65,15 +77,23 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
   const handleReprocess = async () => {
     if (!currentBatchId) return;
     setReprocessing(true);
-    setFeedbackMsg('');
+    setFeedbackMsg("");
     try {
-      const updated = await api.reprocessXml(currentBatchId, xmlCode, selectedTenant);
+      const updated = await api.reprocessXml(
+        currentBatchId,
+        xmlCode,
+        selectedTenant,
+      );
       setCurrentBatch(updated);
       setDiagnostics(updated.diagnostics || []);
-      if (updated.status === 'COMPLIANT') {
-        setFeedbackMsg('Parabéns! O lote foi reprocessado com sucesso e 100% de conformidade foi atingida!');
+      if (updated.status === "COMPLIANT") {
+        setFeedbackMsg(
+          "Parabéns! O lote foi reprocessado com sucesso e 100% de conformidade foi atingida!",
+        );
       } else {
-        setFeedbackMsg(`Reprocessado: ${updated.diagnostics.length} inconsistência(s) remanescente(s).`);
+        setFeedbackMsg(
+          `Reprocessado: ${updated.diagnostics.length} inconsistência(s) remanescente(s).`,
+        );
       }
       if (onBatchUpdated) onBatchUpdated(updated);
     } catch (err) {
@@ -87,10 +107,11 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
   const handleAutoFix = () => {
     let fixed = xmlCode;
     // Corrige CPF inválido 11122233344 para CPF válido 52998224725
-    fixed = fixed.replace('11122233344', '52998224725');
+    fixed = fixed.replace("11122233344", "52998224725");
     // Adiciona bloco de admissão prévio para sanar precedência do S-2299
-    if (fixed.includes('evtDeslig') && !fixed.includes('evtAdmissao')) {
-      fixed = fixed.replace('<evento Id="ID1123456780001952026091300000088">', 
+    if (fixed.includes("evtDeslig") && !fixed.includes("evtAdmissao")) {
+      fixed = fixed.replace(
+        '<evento Id="ID1123456780001952026091300000088">',
         `<!-- Evento S-2200 Admissao adicionado para sanar precedencia -->
       <evento Id="ID1123456780001952026091300000087">
         <eSocial xmlns="http://www.esocial.gov.br/schema/evt/evtAdmissao/v_S_01_02_00">
@@ -101,15 +122,16 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
           </evtAdmissao>
         </eSocial>
       </evento>
-      <evento Id="ID1123456780001952026091300000088">`);
+      <evento Id="ID1123456780001952026091300000088">`,
+      );
     }
     // Ajusta rubrica de INSS
-    fixed = fixed.replace('<vrRubr>150.00</vrRubr>', '<vrRubr>761.59</vrRubr>');
+    fixed = fixed.replace("<vrRubr>150.00</vrRubr>", "<vrRubr>761.59</vrRubr>");
     setXmlCode(fixed);
   };
 
-  const lines = xmlCode.split('\n');
-  const errorLines = new Set(diagnostics.map(d => d.lineNumber));
+  const lines = xmlCode.split("\n");
+  const errorLines = new Set(diagnostics.map((d) => d.lineNumber));
 
   return (
     <div class="space-y-6">
@@ -117,11 +139,14 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-5 rounded-2xl">
         <div>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 uppercase tracking-widest border border-sky-500/20">
-          Central de Diagnóstico &amp; Editor XML
+            Central de Diagnóstico &amp; Editor XML
           </span>
-          <h2 class="text-xl font-bold text-white mt-1">Editor XML com Diagnóstico e Reprocessamento Imediato</h2>
+          <h2 class="text-xl font-bold text-white mt-1">
+            Editor XML com Diagnóstico e Reprocessamento Imediato
+          </h2>
           <p class="text-xs text-slate-400">
-            Identificação de falhas de schema XSD, regras de negócio e reprocessamento em tempo real.
+            Identificação de falhas de schema XSD, regras de negócio e
+            reprocessamento em tempo real.
           </p>
         </div>
 
@@ -135,7 +160,11 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
           >
             {batches.map((b) => (
               <option key={b.batchId} value={b.batchId}>
-                {b.batchId} ({b.status === 'COMPLIANT' ? 'Conforme' : `${b.diagnostics?.length || 0} Erros`})
+                {b.batchId} (
+                {b.status === "COMPLIANT"
+                  ? "Conforme"
+                  : `${b.diagnostics?.length || 0} Erros`}
+                )
               </option>
             ))}
           </select>
@@ -143,13 +172,15 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
       </div>
 
       {feedbackMsg && (
-        <div class={`p-4 rounded-xl border text-xs flex items-center justify-between gap-3 ${
-          currentBatch?.status === 'COMPLIANT'
-            ? 'bg-emerald-950/60 border-emerald-800 text-emerald-300'
-            : 'bg-amber-950/60 border-amber-800 text-amber-300'
-        }`}>
+        <div
+          class={`p-4 rounded-xl border text-xs flex items-center justify-between gap-3 ${
+            currentBatch?.status === "COMPLIANT"
+              ? "bg-emerald-950/60 border-emerald-800 text-emerald-300"
+              : "bg-amber-950/60 border-amber-800 text-amber-300"
+          }`}
+        >
           <div class="flex items-center gap-2 font-medium">
-            {currentBatch?.status === 'COMPLIANT' ? (
+            {currentBatch?.status === "COMPLIANT" ? (
               <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
             ) : (
               <AlertCircle class="w-4 h-4 text-amber-400 shrink-0" />
@@ -166,7 +197,7 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
           <div class="bg-slate-900/90 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between text-xs">
             <div class="flex items-center gap-2 font-mono text-slate-300">
               <Terminal class="w-4 h-4 text-sky-400" />
-              <span>{currentBatch?.fileName || 'editor.xml'}</span>
+              <span>{currentBatch?.fileName || "editor.xml"}</span>
               <span class="text-slate-500">({lines.length} linhas)</span>
             </div>
 
@@ -187,23 +218,30 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
                 disabled={reprocessing}
                 class="px-3 py-1 bg-sky-500 hover:bg-sky-400 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1.5 shadow-md shadow-sky-500/30 disabled:opacity-50"
               >
-                <Zap class={`w-3.5 h-3.5 ${reprocessing ? 'animate-spin' : ''}`} />
-                {reprocessing ? 'Reprocessando...' : 'Reprocessar Imediatamente'}
+                <Zap
+                  class={`w-3.5 h-3.5 ${reprocessing ? "animate-spin" : ""}`}
+                />
+                {reprocessing
+                  ? "Reprocessando..."
+                  : "Reprocessar Imediatamente"}
               </button>
             </div>
           </div>
 
           {/* Área de Código com Numeração */}
-          <div class="relative flex-1 min-h-[460px] max-h-[580px] overflow-auto flex text-xs font-mono">
-            {/* Números das Linhas */}
-            <div class="w-12 bg-slate-900/50 py-3 text-right pr-3 select-none text-slate-600 border-r border-slate-800 shrink-0">
+          <div className="relative w-full h-[500px] max-h-[500px] shrink-0 overflow-hidden flex text-xs font-mono border border-slate-800 rounded-lg">
+            {/* Coluna de Números: Oculta o scroll próprio, rola via Ref */}
+            <div
+              ref={lineNumbersRef}
+              className="w-12 bg-slate-900/50 py-3 text-right pr-3 select-none text-slate-600 border-r border-slate-800 shrink-0 overflow-hidden h-full"
+            >
               {lines.map((_, i) => {
                 const lineNum = i + 1;
                 const hasError = errorLines.has(lineNum);
                 return (
                   <div
                     key={lineNum}
-                    class={`leading-6 ${hasError ? 'text-rose-400 font-bold bg-rose-950/40' : ''}`}
+                    className={`leading-6 ${hasError ? "text-rose-400 font-bold bg-rose-950/40" : ""}`}
                   >
                     {lineNum}
                   </div>
@@ -211,12 +249,13 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
               })}
             </div>
 
-            {/* Editor Textarea */}
+            {/* Textarea: Único elemento que expande e aceita scrollbar */}
             <textarea
               value={xmlCode}
               onChange={(e) => setXmlCode(e.target.value)}
+              onScroll={handleScroll}
               spellCheck="false"
-              class="w-full bg-transparent text-slate-200 p-3 leading-6 resize-none focus:outline-none focus:ring-0 whitespace-pre font-mono text-xs selection:bg-sky-700/60"
+              className="w-full h-full block bg-transparent text-slate-200 p-3 leading-6 resize-none focus:outline-none focus:ring-0 whitespace-pre font-mono text-xs selection:bg-sky-700/60 overflow-auto"
             />
           </div>
         </div>
@@ -229,12 +268,14 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
                 <AlertTriangle class="w-4 h-4 text-amber-400" />
                 Diagnóstico de Auditoria ({diagnostics.length})
               </h3>
-              <span class={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-                diagnostics.length === 0
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                  : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-              }`}>
-                {diagnostics.length === 0 ? 'CONFORME' : 'IRREGULAR'}
+              <span
+                class={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                  diagnostics.length === 0
+                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                    : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                }`}
+              >
+                {diagnostics.length === 0 ? "CONFORME" : "IRREGULAR"}
               </span>
             </div>
 
@@ -246,27 +287,29 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
                     Nenhuma irregularidade detectada!
                   </p>
                   <p class="text-[11px] text-slate-400">
-                    O lote atende integralmente aos esquemas XSD e às regras fiscais e semânticas vigentes.
+                    O lote atende integralmente aos esquemas XSD e às regras
+                    fiscais e semânticas vigentes.
                   </p>
                 </div>
               ) : (
                 diagnostics.map((diag, index) => {
-                  const isCrit = diag.severity === 'CRITICAL';
-                  const isErr = diag.severity === 'ERROR';
+                  const isCrit = diag.severity === "CRITICAL";
+                  const isErr = diag.severity === "ERROR";
                   return (
                     <div
                       key={diag.id || index}
                       class={`p-3.5 rounded-xl border transition ${
                         isCrit
-                          ? 'bg-rose-950/40 border-rose-800/80 text-rose-200'
+                          ? "bg-rose-950/40 border-rose-800/80 text-rose-200"
                           : isErr
-                          ? 'bg-amber-950/40 border-amber-800/80 text-amber-200'
-                          : 'bg-sky-950/40 border-sky-800/80 text-sky-200'
+                            ? "bg-amber-950/40 border-amber-800/80 text-amber-200"
+                            : "bg-sky-950/40 border-sky-800/80 text-sky-200"
                       }`}
                     >
                       <div class="flex items-center justify-between text-[10px] font-mono mb-1">
                         <span class="font-bold px-1.5 py-0.5 rounded bg-black/40">
-                          Linha {diag.lineNumber || 'N/A'} : &lt;{diag.nodeName}&gt;
+                          Linha {diag.lineNumber || "N/A"} : &lt;{diag.nodeName}
+                          &gt;
                         </span>
                         <span class="uppercase tracking-widest font-bold text-[9px] px-1.5 py-0.5 rounded bg-black/40">
                           {diag.severity}
@@ -279,7 +322,9 @@ export default function DiagnosticsPage({ selectedBatch, selectedTenant, onBatch
 
                       {diag.suggestedFix && (
                         <div class="mt-2 text-[11px] bg-black/40 p-2 rounded-lg border border-white/5 text-slate-300">
-                          <span class="font-bold text-sky-400 block mb-0.5">Sugestão de Correção:</span>
+                          <span class="font-bold text-sky-400 block mb-0.5">
+                            Sugestão de Correção:
+                          </span>
                           {diag.suggestedFix}
                         </div>
                       )}
