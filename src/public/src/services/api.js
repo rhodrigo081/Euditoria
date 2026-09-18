@@ -4,7 +4,8 @@
  */
 
 // Lê a variável configurada na Vercel ou usa a URL do Render como fallback
-const API_URL = import.meta.env.VITE_API_URL || "https://euditoria.onrender.com";
+const API_URL =
+  import.meta.env.VITE_PUBLIC_API_URL || "https://euditoria.onrender.com";
 
 export async function fetchWithTenant(
   endpoint,
