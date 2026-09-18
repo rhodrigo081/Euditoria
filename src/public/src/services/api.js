@@ -3,7 +3,7 @@
  * Comunica com o backend Java/Spring Boot e garante isolamento e tratamento de erros.
  */
 
-const BASE_URL = import.meta.env.BASE_URL
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.BASE_URL || '';
 
 export async function fetchWithTenant(
   endpoint,
@@ -15,8 +15,13 @@ export async function fetchWithTenant(
     ...(options.headers || {}),
   };
 
+  // Trata barras duplas ou URLs relativas incorretas
+  const baseUrlFormatted = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
+  const endpointFormatted = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const fullUrl = `${baseUrlFormatted}${endpointFormatted}`;
+
   try {
-    const res = await fetch(`${BASE_URL}${endpoint}`, {
+    const res = await fetch(fullUrl, {
       ...options,
       headers,
     });
