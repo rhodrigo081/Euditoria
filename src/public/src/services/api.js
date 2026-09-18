@@ -3,7 +3,7 @@
  * Comunica com o backend Java/Spring Boot e garante isolamento e tratamento de erros.
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL
+const BASE_URL = import.meta.env.BASE_URL
 
 export async function fetchWithTenant(
   endpoint,
