@@ -35,9 +35,6 @@ services:
       - .env
     ports:
       - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_BASE_URL=${FRONTEND_API_BASE_URL} # ou VITE_API_BASE_URL, dependendo do seu framework
-      - REACT_APP_API_BASE_URL=${FRONTEND_API_BASE_URL}
     depends_on:
       euditoria-backend:
         condition: service_healthy
