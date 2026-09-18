@@ -57,7 +57,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate # Não altera o schema no boot para evitar timeouts na Vercel
+      ddl-auto: update # Não altera o schema no boot para evitar timeouts na Vercel
     open-in-view: false
     show-sql: false
     properties:
