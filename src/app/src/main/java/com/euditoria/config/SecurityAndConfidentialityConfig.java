@@ -10,6 +10,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 
+/**
+ * Configurações de CONFIDENCIALIDADE, Headers de Segurança e CORS.
+ */
 @Configuration
 public class SecurityAndConfidentialityConfig implements WebMvcConfigurer, Filter {
 
@@ -20,7 +23,7 @@ public class SecurityAndConfidentialityConfig implements WebMvcConfigurer, Filte
     public void addCorsMappings(CorsRegistry registry) {
         String[] origins = allowedOrigins.split(",");
 
-        // Alterado de /api/** para /** para cobrir /auth/register e outras rotas
+        // Permite requisições CORS em todas as rotas (incluindo /auth e /tenants)
         registry.addMapping("/**")
                 .allowedOrigins(origins)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
@@ -35,14 +38,14 @@ public class SecurityAndConfidentialityConfig implements WebMvcConfigurer, Filte
             throws IOException, ServletException {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // Headers de segurança HTTP
+        // Ocultar cabeçalhos de tecnologia e definir headers de segurança
         httpResponse.setHeader("X-Content-Type-Options", "nosniff");
         httpResponse.setHeader("X-Frame-Options", "DENY");
         httpResponse.setHeader("X-XSS-Protection", "1; mode=block");
         httpResponse.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
         httpResponse.setHeader("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
 
-        // Permite que o Spring Web MVC trate o pré-flight OPTIONS com as regras de CORS definidas em addCorsMappings
+        // Deixa o Spring Web MVC gerenciar o pré-flight OPTIONS com as regras de CORS acima
         chain.doFilter(request, response);
     }
 }
