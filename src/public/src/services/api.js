@@ -3,6 +3,7 @@
  * Comunica com o backend Java/Spring Boot e garante isolamento e tratamento de erros.
  */
 
+// Lê a variável configurada na Vercel ou usa a URL do Render como fallback
 const API_URL = import.meta.env.VITE_API_URL || "https://euditoria.onrender.com";
 
 export async function fetchWithTenant(
@@ -15,7 +16,7 @@ export async function fetchWithTenant(
     ...(options.headers || {}),
   };
 
-  // Trata barras duplas ou URLs relativas incorretas
+  // Garante a formatação correta das barras na URL
   const baseUrlFormatted = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
   const endpointFormatted = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   const fullUrl = `${baseUrlFormatted}${endpointFormatted}`;
