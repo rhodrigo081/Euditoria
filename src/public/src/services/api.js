@@ -3,7 +3,7 @@
  * Comunica com o backend Java/Spring Boot e garante isolamento e tratamento de erros.
  */
 
-const API_URL = import.meta.env.VITE_API_URL || import.meta.env.BASE_URL || '';
+const API_URL = import.meta.env.VITE_API_URL || "https://euditoria.onrender.com";
 
 export async function fetchWithTenant(
   endpoint,
