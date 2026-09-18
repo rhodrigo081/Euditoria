@@ -10,9 +10,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 
-/**
- * Configurações de CONFIDENCIALIDADE, Headers de Segurança e CORS.
- */
 @Configuration
 public class SecurityAndConfidentialityConfig implements WebMvcConfigurer, Filter {
 
@@ -23,7 +20,8 @@ public class SecurityAndConfidentialityConfig implements WebMvcConfigurer, Filte
     public void addCorsMappings(CorsRegistry registry) {
         String[] origins = allowedOrigins.split(",");
 
-        registry.addMapping("/api/**")
+        // Alterado de /api/** para /** para cobrir /auth/register e outras rotas
+        registry.addMapping("/**")
                 .allowedOrigins(origins)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
@@ -35,22 +33,16 @@ public class SecurityAndConfidentialityConfig implements WebMvcConfigurer, Filte
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // Ocultar cabeçalhos de tecnologia e definir headers de segurança
+        // Headers de segurança HTTP
         httpResponse.setHeader("X-Content-Type-Options", "nosniff");
         httpResponse.setHeader("X-Frame-Options", "DENY");
         httpResponse.setHeader("X-XSS-Protection", "1; mode=block");
         httpResponse.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
         httpResponse.setHeader("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
 
-        // Tratamento direto de requisições OPTIONS pré-flight
-        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
-            httpResponse.setStatus(HttpServletResponse.SC_OK);
-            return;
-        }
-
+        // Permite que o Spring Web MVC trate o pré-flight OPTIONS com as regras de CORS definidas em addCorsMappings
         chain.doFilter(request, response);
     }
 }
