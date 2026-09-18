@@ -46,7 +46,7 @@ spring:
 
   datasource:
     # Formatação com parâmetros corretos para o Transaction Pooler do Supabase (PgBouncer)
-    url: jdbc:postgresql://${SUPABASE_DB_HOST}:${SUPABASE_DB_PORT:6543}/postgres?sslmode=require&prepareThreshold=0
+    url: jdbc:postgresql://${SUPABASE_DB_HOST}:${SUPABASE_DB_PORT:6543}/postgres?prepareThreshold=0
     username: ${SUPABASE_DB_USER}
     password: ${SUPABASE_DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
