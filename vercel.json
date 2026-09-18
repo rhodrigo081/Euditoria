@@ -2,11 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "/src/app/:path*"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/src/public/:path*"
+      "destination": "https://euditoria-back.vercel.app/api/:path*"
     }
   ]
 }

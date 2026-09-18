@@ -16,7 +16,7 @@ import java.io.IOException;
 @Configuration
 public class SecurityAndConfidentialityConfig implements WebMvcConfigurer, Filter {
 
-    @Value("${EUDITORIA_CORS_ALLOWED_ORIGINS:http://localhost:3000}")
+    @Value("${euditoria.cors.allowed-origins}")
     private String allowedOrigins;
 
     @Override
