@@ -1,2 +1,5 @@
-*Dockerfile
-*docker-compose.yml
+Dockerfile
+docker-compose.yml
+.dockerignore
+/src/app/Dockerfile
+/src/public/Dockerfile
